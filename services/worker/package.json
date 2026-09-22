@@ -1,0 +1,13 @@
+{
+  "name": "@agropulse/worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.0",
+    "kafkajs": "^2.2.4"
+  }
+}

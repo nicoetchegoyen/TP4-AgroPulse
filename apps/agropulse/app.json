@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "AgroPulse",
+    "slug": "agropulse",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "agropulse",
+    "userInterfaceStyle": "light",
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "AgroPulse usa tu ubicación para indicar si estás dentro de un lote."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "android": {
+      "package": "edu.fcyt.agropulse"
+    },
+    "ios": {
+      "bundleIdentifier": "edu.fcyt.agropulse"
+    }
+  }
+}

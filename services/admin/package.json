@@ -1,0 +1,12 @@
+{
+  "name": "@agropulse/admin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/seed-users.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.0"
+  }
+}

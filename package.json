@@ -1,0 +1,24 @@
+{
+  "name": "agropulse",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*"
+  ],
+  "scripts": {
+    "app": "npm run start --workspace @agropulse/app",
+    "app:android": "npm run android --workspace @agropulse/app",
+    "check": "npm run typecheck --workspace @agropulse/app && npm run test --workspace @agropulse/app",
+    "typecheck": "npm run typecheck --workspace @agropulse/app",
+    "test": "npm run test --workspace @agropulse/app",
+    "worker": "npm run start --workspace @agropulse/worker",
+    "simulator": "npm run start --workspace @agropulse/simulator",
+    "seed:users": "npm run start --workspace @agropulse/admin",
+    "infra:up": "docker compose --env-file .env -f infra/docker-compose.yml up --build",
+    "infra:down": "docker compose --env-file .env -f infra/docker-compose.yml down"
+  },
+  "engines": {
+    "node": ">=22.13"
+  }
+}

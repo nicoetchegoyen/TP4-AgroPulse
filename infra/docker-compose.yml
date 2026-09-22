@@ -1,0 +1,108 @@
+name: agropulse
+
+networks:
+  agropulse_network:
+    driver: bridge
+
+volumes:
+  redpanda_data:
+
+services:
+  redpanda-0:
+    image: docker.redpanda.com/redpandadata/redpanda:v26.2.3
+    container_name: agropulse-redpanda
+    command:
+      - redpanda
+      - start
+      - --kafka-addr
+      - internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr
+      - internal://redpanda-0:9092,external://localhost:19092
+      - --pandaproxy-addr
+      - internal://0.0.0.0:8082,external://0.0.0.0:18082
+      - --advertise-pandaproxy-addr
+      - internal://redpanda-0:8082,external://localhost:18082
+      - --schema-registry-addr
+      - internal://0.0.0.0:8081,external://0.0.0.0:18081
+      - --rpc-addr
+      - redpanda-0:33145
+      - --advertise-rpc-addr
+      - redpanda-0:33145
+      - --mode
+      - dev-container
+      - --smp
+      - "1"
+      - --default-log-level=info
+    ports:
+      - "18081:18081"
+      - "18082:18082"
+      - "19092:19092"
+      - "19644:9644"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    networks:
+      - agropulse_network
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster info -X brokers=localhost:9092"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+
+  console:
+    image: docker.redpanda.com/redpandadata/console:v3.12.0
+    container_name: agropulse-console
+    networks:
+      - agropulse_network
+    entrypoint: /bin/sh
+    command: -c 'echo "$$CONSOLE_CONFIG_FILE" > /tmp/config.yml && /app/console'
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["redpanda-0:9092"]
+        schemaRegistry:
+          enabled: true
+          urls: ["http://redpanda-0:8081"]
+        redpanda:
+          adminApi:
+            enabled: true
+            urls: ["http://redpanda-0:9644"]
+    ports:
+      - "8080:8080"
+    depends_on:
+      redpanda-0:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: ..
+      dockerfile: services/worker/Dockerfile
+    container_name: agropulse-worker
+    restart: unless-stopped
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL:?Set SUPABASE_URL in .env}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:?Set SUPABASE_SERVICE_ROLE_KEY in .env}
+      KAFKA_BROKERS: redpanda-0:9092
+      KAFKA_CLIENT_ID: agropulse-worker
+      KAFKA_GROUP_ID: ${KAFKA_GROUP_ID:-agropulse-readings-worker}
+      COMMAND_FAILURE_RATE: ${COMMAND_FAILURE_RATE:-0.10}
+    networks:
+      - agropulse_network
+    depends_on:
+      redpanda-0:
+        condition: service_healthy
+
+  simulator:
+    build:
+      context: ..
+      dockerfile: services/simulator/Dockerfile
+    container_name: agropulse-simulator
+    restart: unless-stopped
+    environment:
+      KAFKA_BROKERS: redpanda-0:9092
+      SIMULATOR_STATION_IDS: ${SIMULATOR_STATION_IDS:-30000000-0000-4000-8000-000000000001,30000000-0000-4000-8000-000000000002}
+    networks:
+      - agropulse_network
+    depends_on:
+      redpanda-0:
+        condition: service_healthy
