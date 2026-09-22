@@ -28,8 +28,8 @@ Validaciones realizadas al 22 de septiembre de 2026:
 ## Clonar en la notebook
 
 ```bash
-git clone URL_DEL_REPOSITORIO
-cd agropulse-tp4
+git clone https://github.com/nicoetchegoyen/TP4-AgroPulse.git
+cd TP4-AgroPulse
 npm install
 ```
 
