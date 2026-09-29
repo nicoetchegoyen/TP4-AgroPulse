@@ -14,12 +14,14 @@ interface Props {
   onChanged: () => Promise<void>;
 }
 
+// rf-13 y rf-14: presenta las válvulas y las acciones de abrir, cerrar o regar por tiempo.
 export function CommandPanel({ plotName, valves, commands, role, onChanged }: Props) {
   const { session } = useAuth();
   const [duration, setDuration] = useState(30);
   const [submitting, setSubmitting] = useState<string | null>(null);
   const canCommand = role === 'producer' || role === 'operator';
 
+  // rf-14 y rf-16: confirma la acción y evita enviar otra mientras hay una pendiente.
   const submit = async (valve: Valve, action: 'open' | 'close' | 'timed') => {
     if (!session || !canCommand || submitting) return;
     const pending = commands.some((command) => command.valve_id === valve.id && command.status === 'pending');
@@ -37,6 +39,8 @@ export function CommandPanel({ plotName, valves, commands, role, onChanged }: Pr
           text: 'Confirmar',
           onPress: async () => {
             setSubmitting(valve.id);
+            // rf-15: el comando queda pendiente hasta que el worker lo aplique o falle.
+            // cada pedido lleva un identificador único que la base usa para detectar duplicados.
             const { error } = await supabase.from('irrigation_commands').insert({
               valve_id: valve.id,
               requested_by: session.user.id,
@@ -56,6 +60,7 @@ export function CommandPanel({ plotName, valves, commands, role, onChanged }: Pr
 
   return (
     <View style={styles.stack}>
+      {/* rf-02: el asesor puede consultar el estado, pero no enviar comandos. */}
       {!canCommand ? <Text style={styles.readOnly}>Tu rol de asesor es de solo lectura.</Text> : null}
       {valves.map((valve) => {
         const pending = commands.find((command) => command.valve_id === valve.id && command.status === 'pending');
@@ -87,6 +92,7 @@ export function CommandPanel({ plotName, valves, commands, role, onChanged }: Pr
   );
 }
 
+// rf-14: este botón reutilizable se desactiva según el rol o un comando pendiente.
 function Action({ label, onPress, disabled, primary }: { label: string; onPress: () => void; disabled: boolean; primary?: boolean }) {
   return (
     <Pressable disabled={disabled} onPress={onPress} style={[styles.action, primary && styles.actionPrimary, disabled && styles.disabled]}>

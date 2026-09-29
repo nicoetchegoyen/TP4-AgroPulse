@@ -1,3 +1,4 @@
+# rnf-06: crea una imagen pequeña para consumir lecturas y procesar comandos.
 FROM node:22-alpine
 WORKDIR /app
 COPY services/worker/package.json ./package.json

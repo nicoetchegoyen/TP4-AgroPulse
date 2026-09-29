@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { OrganizationProvider } from '@/contexts/OrganizationContext';
 import { colors } from '@/lib/theme';
 
+// rnf-01: organiza las rutas y comparte sesión y establecimiento en toda la app.
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
@@ -20,11 +21,13 @@ export default function RootLayout() {
   );
 }
 
+// rf-01: decide qué pantalla mostrar según exista o no una sesión activa.
 function RootNavigator() {
   const { session, initializing } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
+  // al cambiar la sesión, envía al ingreso o a las pestañas principales.
   useEffect(() => {
     if (initializing) return;
     const inAuthGroup = segments[0] === '(auth)';

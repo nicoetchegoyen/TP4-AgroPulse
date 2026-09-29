@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { computePlotStatus } from '../lib/plot-status';
 
+// rnf-08: verifica la prioridad entre datos viejos, humedad baja, normal y alta.
 const now = new Date('2026-09-22T12:00:00.000Z');
 
 describe('computePlotStatus', () => {

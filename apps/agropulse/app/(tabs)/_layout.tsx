@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '@/lib/theme';
 
+// rnf-01: organiza mapa, lotes, alertas y cuenta en la barra inferior.
 export default function TabLayout() {
   return (
     <Tabs

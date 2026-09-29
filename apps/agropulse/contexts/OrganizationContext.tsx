@@ -14,6 +14,7 @@ interface OrganizationValue {
 
 const OrganizationContext = createContext<OrganizationValue | null>(null);
 
+// rf-02 y rf-03: comparte los establecimientos permitidos y el que está seleccionado.
 export function OrganizationProvider({ children }: PropsWithChildren) {
   const { session } = useAuth();
   const [memberships, setMemberships] = useState<Membership[]>([]);
@@ -21,6 +22,7 @@ export function OrganizationProvider({ children }: PropsWithChildren) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // rf-02: solo consulta las membresías del usuario que inició sesión.
   const refresh = async () => {
     if (!session) {
       setMemberships([]);
@@ -36,6 +38,7 @@ export function OrganizationProvider({ children }: PropsWithChildren) {
 
     if (queryError) setError(queryError.message);
     else {
+      // la relación puede llegar como objeto o lista; se normaliza para la interfaz.
       const next = (data ?? []).map((item) => ({
         ...item,
         organizations: Array.isArray(item.organizations)
@@ -52,6 +55,7 @@ export function OrganizationProvider({ children }: PropsWithChildren) {
     void refresh();
   }, [session?.user.id]);
 
+  // rf-03: si hay varios establecimientos, mantiene el elegido por el usuario.
   const activeMembership =
     memberships.find((membership) => membership.organization_id === activeOrganizationId) ?? null;
 
@@ -70,6 +74,7 @@ export function OrganizationProvider({ children }: PropsWithChildren) {
   return <OrganizationContext.Provider value={value}>{children}</OrganizationContext.Provider>;
 }
 
+// permite leer el establecimiento activo desde cualquier pantalla.
 export function useOrganization() {
   const context = useContext(OrganizationContext);
   if (!context) throw new Error('useOrganization must be used inside OrganizationProvider');

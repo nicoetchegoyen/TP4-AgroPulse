@@ -14,7 +14,7 @@
 - [x] RF-11: umbral mínimo editable y persistente.
 - [x] RF-12: semáforo según prioridad stale, dry, optimal, wet.
 - [x] RF-13: válvulas por lote.
-- [x] RF-14: comandos abrir, cerrar y riego temporizado de 1 a 120 minutos.
+- [x] RF-14: comandos abrir, cerrar y riego temporizado de 1 a 120 minutos; el worker cierra la válvula al vencer el plazo, aun después de reiniciar.
 - [x] RF-15: worker aplica o falla comandos en uno a cuatro segundos; UI por Realtime.
 - [x] RF-16: índice parcial evita dos comandos pending para una válvula.
 - [x] RF-23: pantalla Diagnóstico.
@@ -25,7 +25,7 @@
 - [x] RF-18: últimos veinte comandos en el detalle.
 - [x] RF-19 y RF-20: inbox de alertas dry y stale.
 - [x] RF-22: sugerencia fija cuando la humedad está bajo el umbral.
-- [x] RNF-08: tests unitarios de semáforo y geometría.
+- [x] RNF-08: tests unitarios de semáforo, geometría y vencimiento del riego temporizado.
 
 ## Should pendientes
 

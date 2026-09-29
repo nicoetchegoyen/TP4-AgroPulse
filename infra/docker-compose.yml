@@ -1,13 +1,16 @@
 name: agropulse
 
+# rnf-06: todos los contenedores se comunican por esta red privada.
 networks:
   agropulse_network:
     driver: bridge
 
+# conserva los mensajes del broker entre reinicios.
 volumes:
   redpanda_data:
 
 services:
+  # rf-08: redpanda recibe las mediciones simuladas por kafka.
   redpanda-0:
     image: docker.redpanda.com/redpandadata/redpanda:v26.2.3
     container_name: agropulse-redpanda
@@ -48,6 +51,7 @@ services:
       timeout: 4s
       retries: 12
 
+  # rf-24: la consola permite observar el broker durante la ejecución.
   console:
     image: docker.redpanda.com/redpandadata/console:v3.12.0
     container_name: agropulse-console
@@ -73,6 +77,7 @@ services:
       redpanda-0:
         condition: service_healthy
 
+  # rf-15 y rf-24: el worker consume lecturas y resuelve órdenes de riego.
   worker:
     build:
       context: ..
@@ -92,6 +97,7 @@ services:
       redpanda-0:
         condition: service_healthy
 
+  # rf-08: el simulador produce nuevas mediciones sin sensores físicos.
   simulator:
     build:
       context: ..

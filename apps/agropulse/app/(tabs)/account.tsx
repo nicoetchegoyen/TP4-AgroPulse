@@ -7,6 +7,7 @@ import { colors } from '@/lib/theme';
 
 const roleLabel = { producer: 'Productor', operator: 'Operador de riego', advisor: 'Asesor' } as const;
 
+// rf-01 y rf-02: muestra quién ingresó, su rol y el establecimiento asignado.
 export default function AccountScreen() {
   const { session, signOut } = useAuth();
   const { activeMembership } = useOrganization();
@@ -37,6 +38,7 @@ export default function AccountScreen() {
   );
 }
 
+// evita repetir el diseño de cada dato de la cuenta.
 function Row({ label, value }: { label: string; value: string }) {
   return <View style={styles.row}><Text style={styles.rowLabel}>{label}</Text><Text style={styles.rowValue}>{value}</Text></View>;
 }

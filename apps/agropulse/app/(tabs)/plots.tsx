@@ -6,9 +6,10 @@ import { useOrganization } from '@/contexts/OrganizationContext';
 import { usePlotSummaries } from '@/hooks/usePlotSummaries';
 import { colors } from '@/lib/theme';
 
+// rf-04: lista los lotes visibles para el establecimiento activo.
 export default function PlotsScreen() {
   const { activeMembership, loading: organizationLoading } = useOrganization();
-  const { plots, loading, error, refresh } = usePlotSummaries(activeMembership?.organization_id);
+  const { plots, loading, error, refresh } = usePlotSummaries(activeMembership?.organization_id, 'plots');
 
   if (organizationLoading || (loading && plots.length === 0)) return <ScreenState loading title="Cargando lotes…" />;
   if (error && plots.length === 0) return <ScreenState title="No pudimos cargar los lotes" message={error} onRetry={() => void refresh()} />;

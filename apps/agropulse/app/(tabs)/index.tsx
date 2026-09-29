@@ -18,9 +18,10 @@ const initialRegion = {
   longitudeDelta: 0.026,
 };
 
+// rf-05 y rf-06: muestra los polígonos y permite comparar la ubicación del teléfono.
 export default function MapScreen() {
   const { activeMembership, loading: organizationLoading } = useOrganization();
-  const { plots, loading, error, refresh } = usePlotSummaries(activeMembership?.organization_id);
+  const { plots, loading, error, refresh } = usePlotSummaries(activeMembership?.organization_id, 'map');
   const [location, setLocation] = useState<Coordinate | null>(null);
   const [locating, setLocating] = useState(false);
   const [selectedName, setSelectedName] = useState<string | null>(null);
@@ -30,6 +31,7 @@ export default function MapScreen() {
     [location, plots],
   );
 
+  // rf-06: pide permiso de ubicación y continúa mostrando el mapa si se rechaza.
   const locate = async () => {
     setLocating(true);
     const permission = await Location.requestForegroundPermissionsAsync();
@@ -53,6 +55,7 @@ export default function MapScreen() {
   if (!activeMembership) return <ScreenState title="Sin establecimiento" message="Este usuario todavía no pertenece a un establecimiento." />;
   if (plots.length === 0) return <ScreenState title="No hay lotes" message="Cargá la semilla para ver los polígonos del establecimiento." onRetry={() => void refresh()} />;
 
+  // rf-05: tocar el fondo quita la selección previa de un lote.
   const onMapPress = (_event: MapPressEvent) => setSelectedName(null);
 
   return (
@@ -60,6 +63,7 @@ export default function MapScreen() {
       <OrganizationSwitcher />
       <View style={styles.mapContainer}>
         <MapView style={StyleSheet.absoluteFill} initialRegion={initialRegion} onPress={onMapPress}>
+          {/* rf-05 y rf-12: cada polígono usa el color del estado y abre el detalle. */}
           {plots.map((plot) => {
             const meta = statusMeta[plot.status];
             return (

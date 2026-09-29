@@ -11,6 +11,7 @@ import { supabase } from '@/lib/supabase';
 import { colors } from '@/lib/theme';
 import type { IrrigationCommand, PlotSummary, Reading, Valve } from '@/types/domain';
 
+// rf-09, rf-10 y rf-13: reúne mediciones, gráfico, umbral y válvulas de un lote.
 export default function PlotDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { activeMembership } = useOrganization();
@@ -23,6 +24,7 @@ export default function PlotDetailScreen() {
   const [error, setError] = useState<string | null>(null);
   const [savingThreshold, setSavingThreshold] = useState(false);
 
+  // consulta el resumen del lote y luego carga lecturas, válvulas y comandos.
   const refresh = useCallback(async () => {
     if (!id) return;
     setLoading(true);
@@ -36,6 +38,7 @@ export default function PlotDetailScreen() {
     setPlot(nextPlot);
     setThresholdMin(nextPlot.threshold_min);
 
+    // rf-10: el gráfico se limita a las últimas seis horas.
     const since = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
     const [readingResult, valveResult] = await Promise.all([
       nextPlot.station_id
@@ -51,6 +54,7 @@ export default function PlotDetailScreen() {
       setReadings((readingResult.data ?? []) as Reading[]);
       setValves(nextValves);
       if (nextValves.length > 0) {
+        // rf-18: el historial muestra como máximo los veinte comandos más recientes.
         const commandResult = await supabase
           .from('irrigation_commands')
           .select('*')
@@ -65,6 +69,7 @@ export default function PlotDetailScreen() {
     setLoading(false);
   }, [id]);
 
+  // rnf-04: las lecturas, válvulas y órdenes nuevas actualizan el detalle.
   useEffect(() => {
     void refresh();
     const channel = supabase
@@ -76,6 +81,7 @@ export default function PlotDetailScreen() {
     return () => { void supabase.removeChannel(channel); };
   }, [id, refresh]);
 
+  // rf-11: guarda el umbral mínimo; el asesor solo puede consultarlo.
   const saveThreshold = async () => {
     if (!plot) return;
     if (thresholdMin < 0 || thresholdMin >= plot.threshold_max) {
@@ -101,6 +107,7 @@ export default function PlotDetailScreen() {
       </View>
 
       {error ? <Text style={styles.inlineError}>{error}</Text> : null}
+      {/* rf-22: si el lote está seco, muestra una sugerencia simple de riego. */}
       {plot.status === 'dry' ? <Text style={styles.suggestion}>Humedad bajo umbral: considerar riego.</Text> : null}
 
       <View style={styles.metrics}>
@@ -109,11 +116,13 @@ export default function PlotDetailScreen() {
         <Metric label="Lluvia" value={plot.rain_mm === null ? '—' : `${plot.rain_mm.toFixed(1)} mm`} />
       </View>
 
+      {/* rf-10: el gráfico usa las lecturas recientes y los umbrales del lote. */}
       <Section title="Humedad · últimas 6 horas">
         <MoistureChart readings={readings} thresholdMin={plot.threshold_min} thresholdMax={plot.threshold_max} />
         <Text style={styles.points}>{readings.length} puntos recibidos</Text>
       </Section>
 
+      {/* rf-11: productor y operador pueden modificar el mínimo permitido. */}
       <Section title="Umbral de riego">
         <View style={styles.thresholdRow}>
           <Pressable style={styles.stepper} onPress={() => setThresholdMin((value) => Math.max(0, value - 1))}><Text style={styles.stepperText}>−</Text></Pressable>
@@ -123,10 +132,12 @@ export default function PlotDetailScreen() {
         <Pressable disabled={savingThreshold || activeMembership.role === 'advisor'} onPress={() => void saveThreshold()} style={[styles.saveButton, (savingThreshold || activeMembership.role === 'advisor') && styles.disabled]}><Text style={styles.saveButtonText}>{activeMembership.role === 'advisor' ? 'Solo lectura' : savingThreshold ? 'Guardando…' : 'Guardar umbral'}</Text></Pressable>
       </Section>
 
+      {/* rf-13 a rf-16: el panel envía comandos y muestra su estado pendiente. */}
       <Section title="Riego">
         {valves.length === 0 ? <Text style={styles.empty}>No hay válvulas configuradas.</Text> : <CommandPanel plotName={plot.name} valves={valves} commands={commands} role={activeMembership.role} onChanged={refresh} />}
       </Section>
 
+      {/* rf-18: conserva a la vista los últimos comandos del lote. */}
       <Section title="Últimos comandos">
         {commands.length === 0 ? <Text style={styles.empty}>Todavía no se enviaron comandos.</Text> : commands.map((command) => <CommandRow key={command.id} command={command} />)}
       </Section>
@@ -134,14 +145,17 @@ export default function PlotDetailScreen() {
   );
 }
 
+// agrupa visualmente una parte del detalle del lote.
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return <View style={styles.section}><Text style={styles.sectionTitle}>{title}</Text>{children}</View>;
 }
 
+// presenta una medición con su nombre y valor.
 function Metric({ label, value }: { label: string; value: string }) {
   return <View style={styles.metric}><Text style={styles.metricValue}>{value}</Text><Text style={styles.metricLabel}>{label}</Text></View>;
 }
 
+// rf-15 y rf-18: muestra la acción, fecha y resultado de cada comando.
 function CommandRow({ command }: { command: IrrigationCommand }) {
   const statusColor = command.status === 'applied' ? colors.optimal : command.status === 'failed' ? colors.dry : command.status === 'pending' ? colors.warning : colors.stale;
   const actionLabel = command.action === 'timed' ? `Regar ${command.duration_min} min` : command.action === 'open' ? 'Abrir' : 'Cerrar';

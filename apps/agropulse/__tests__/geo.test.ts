@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { isPointInsidePolygon } from '../lib/geo';
 
+// rnf-08 y rf-06: comprueba que la ubicación se clasifique dentro o fuera del lote.
 const square = {
   type: 'Polygon' as const,
   coordinates: [[

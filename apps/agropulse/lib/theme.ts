@@ -1,3 +1,4 @@
+// rf-12: estos colores mantienen el mismo significado de estado en toda la app.
 export const colors = {
   background: '#F4F7F2',
   surface: '#FFFFFF',
@@ -15,6 +16,7 @@ export const colors = {
   successSurface: '#E6F5EB',
 };
 
+// rf-12: cada estado tiene un texto, un color y un símbolo para no depender solo del color.
 export const statusMeta = {
   stale: { label: 'Sin datos', color: colors.stale, symbol: '—' },
   dry: { label: 'Seco', color: colors.dry, symbol: '!' },

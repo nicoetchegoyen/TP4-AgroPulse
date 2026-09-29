@@ -6,12 +6,14 @@ import { supabase } from '@/lib/supabase';
 import { colors } from '@/lib/theme';
 import type { AlertItem } from '@/types/domain';
 
+// rf-19 y rf-20: reúne avisos por sequía y por estaciones sin datos recientes.
 export default function AlertsScreen() {
   const { activeMembership } = useOrganization();
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // rf-02: consulta solo las alertas de los lotes del establecimiento activo.
   const refresh = useCallback(async () => {
     if (!activeMembership) return setLoading(false);
     setLoading(true);
@@ -28,6 +30,7 @@ export default function AlertsScreen() {
     setLoading(false);
   }, [activeMembership]);
 
+  // rnf-04: al llegar una alerta nueva, vuelve a leer la lista.
   useEffect(() => {
     void refresh();
     const channel = supabase.channel('alerts-inbox').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'alerts' }, () => void refresh()).subscribe();

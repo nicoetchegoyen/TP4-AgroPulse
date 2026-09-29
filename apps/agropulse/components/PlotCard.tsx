@@ -5,6 +5,7 @@ import { formatAge } from '@/lib/plot-status';
 import { colors } from '@/lib/theme';
 import type { PlotSummary } from '@/types/domain';
 
+// rf-04 y rf-09: resume cultivo, estado y última lectura; al tocar abre el detalle.
 export function PlotCard({ plot }: { plot: PlotSummary }) {
   return (
     <Pressable

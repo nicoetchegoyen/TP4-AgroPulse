@@ -1,5 +1,6 @@
 import type { PlotStatus } from '@/types/domain';
 
+// rf-09: una lectura con más de quince minutos se considera desactualizada.
 export const STALE_AFTER_MS = 15 * 60 * 1000;
 
 interface StatusInput {
@@ -10,6 +11,7 @@ interface StatusInput {
   now?: Date;
 }
 
+// rf-09 y rf-12: primero descarta datos viejos; luego compara humedad con los umbrales.
 export function computePlotStatus({
   measuredAt,
   moisturePct,
@@ -28,6 +30,7 @@ export function computePlotStatus({
   return 'wet';
 }
 
+// rf-09: convierte la fecha de la última medición en una antigüedad fácil de leer.
 export function formatAge(value: string | null, now = new Date()): string {
   if (!value) return 'sin lecturas';
   const seconds = Math.max(0, Math.floor((now.getTime() - new Date(value).getTime()) / 1000));

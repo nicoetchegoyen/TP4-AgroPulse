@@ -6,6 +6,7 @@ import { formatAge } from '@/lib/plot-status';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { colors } from '@/lib/theme';
 
+// rf-23: resume conexión, usuario, rol y antigüedad de la última lectura.
 export default function DiagnosticsScreen() {
   const { session } = useAuth();
   const { activeMembership } = useOrganization();
@@ -13,6 +14,7 @@ export default function DiagnosticsScreen() {
   const [connection, setConnection] = useState<'checking' | 'connected' | 'error'>('checking');
   const [message, setMessage] = useState<string | null>(null);
 
+  // rnf-05: una consulta simple distingue conexión correcta de error de datos.
   const check = useCallback(async () => {
     if (!isSupabaseConfigured) {
       setConnection('error');
@@ -55,6 +57,7 @@ export default function DiagnosticsScreen() {
   );
 }
 
+// presenta cada dato del diagnóstico con el mismo formato.
 function DiagnosticRow({ label, value }: { label: string; value: string }) {
   return <View style={styles.row}><Text style={styles.label}>{label}</Text><Text selectable style={styles.value}>{value}</Text></View>;
 }

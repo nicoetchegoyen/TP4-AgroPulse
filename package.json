@@ -9,12 +9,12 @@
   "scripts": {
     "app": "npm run start --workspace @agropulse/app",
     "app:android": "npm run android --workspace @agropulse/app",
-    "check": "npm run typecheck --workspace @agropulse/app && npm run test --workspace @agropulse/app",
+    "check": "npm run typecheck --workspace @agropulse/app && npm run test --workspace @agropulse/app && npm run test --workspace @agropulse/worker",
     "typecheck": "npm run typecheck --workspace @agropulse/app",
     "test": "npm run test --workspace @agropulse/app",
     "worker": "npm run start --workspace @agropulse/worker",
     "simulator": "npm run start --workspace @agropulse/simulator",
-    "seed:users": "npm run start --workspace @agropulse/admin",
+    "seed:users": "node --env-file=.env services/admin/src/seed-users.mjs",
     "infra:up": "docker compose --env-file .env -f infra/docker-compose.yml up --build",
     "infra:down": "docker compose --env-file .env -f infra/docker-compose.yml down"
   },

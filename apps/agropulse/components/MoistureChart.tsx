@@ -9,6 +9,7 @@ interface Props {
   thresholdMax: number;
 }
 
+// rf-10: dibuja las lecturas recientes y marca los umbrales de humedad del lote.
 export function MoistureChart({ readings, thresholdMin, thresholdMax }: Props) {
   const { width } = useWindowDimensions();
   const chartWidth = Math.max(260, Math.min(width - 64, 680));
@@ -19,10 +20,12 @@ export function MoistureChart({ readings, thresholdMin, thresholdMax }: Props) {
     return <Text style={styles.empty}>Todavía no hay suficientes puntos para graficar.</Text>;
   }
 
+  // los datos y umbrales definen la escala vertical para aprovechar el espacio.
   const values = readings.map((reading) => reading.moisture_pct);
   const minY = Math.max(0, Math.min(...values, thresholdMin) - 5);
   const maxY = Math.min(100, Math.max(...values, thresholdMax) + 5);
   const span = Math.max(1, maxY - minY);
+  // estas funciones convierten cada lectura a una posición dentro del gráfico.
   const x = (index: number) => padding + (index / (readings.length - 1)) * (chartWidth - padding * 2);
   const y = (value: number) => chartHeight - padding - ((value - minY) / span) * (chartHeight - padding * 2);
   const path = readings

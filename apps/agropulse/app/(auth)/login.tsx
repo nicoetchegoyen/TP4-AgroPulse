@@ -7,6 +7,7 @@ import { colors } from '@/lib/theme';
 
 const demoUsers = ['productor@agropulse.test', 'operador@agropulse.test', 'asesor@agropulse.test'];
 
+// rf-01: permite ingresar con correo y contraseña y elegir una cuenta de ejemplo.
 export default function LoginScreen() {
   const { signIn } = useAuth();
   const [email, setEmail] = useState(demoUsers[0] ?? '');
@@ -14,6 +15,7 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // evita mostrar un error viejo mientras supabase valida el nuevo intento.
   const submit = async () => {
     setSubmitting(true);
     setError(null);
@@ -56,6 +58,7 @@ export default function LoginScreen() {
             ))}
           </View>
         </View>
+        {/* rnf-10: recuerda que las ubicaciones y mediciones mostradas son ficticias. */}
         <Text style={styles.disclaimer}>Todos los datos de humedad y GPS de esta demo son ficticios.</Text>
       </KeyboardAvoidingView>
     </SafeAreaView>

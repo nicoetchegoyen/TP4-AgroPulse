@@ -72,6 +72,6 @@ Para la defensa se mantiene Monte A fuera de la lista de estaciones activas. Cos
 
 ## 8. Limitaciones y próximos pasos
 
-La lectura manual offline, la edición de polígonos y la cancelación de comandos son requisitos Should que quedan documentados, pero fuera del camino crítico. Para una versión productiva también serían necesarios gestión formal de secretos, observabilidad centralizada, retención por particiones, alertas derivadas automáticamente, cierre programado del riego temporizado y calibración por tipo de suelo y sensor.
+La lectura manual offline, la edición de polígonos y la cancelación de comandos son requisitos Should que quedan documentados, pero fuera del camino crítico. El worker cierra el riego temporizado al vencer el plazo guardado en Postgres, incluso si se reinicia durante la espera. Para una versión productiva también serían necesarios gestión formal de secretos, observabilidad centralizada, retención por particiones, alertas derivadas automáticamente y calibración por tipo de suelo y sensor.
 
 Antes de entregar el informe final debe agregarse una captura propia del recorrido H1 ejecutado contra el proyecto Supabase elegido. No se incluye una captura artificial porque sería evidencia inválida.

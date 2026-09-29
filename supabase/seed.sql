@@ -1,7 +1,9 @@
+-- rnf-06: crea o actualiza el establecimiento ficticio de la demostración.
 insert into public.organizations (id, name, region)
 values ('10000000-0000-4000-8000-000000000001', 'Estancia Didáctica Concordia', 'Concordia, Entre Ríos')
 on conflict (id) do update set name = excluded.name, region = excluded.region;
 
+-- rf-04 y rf-05: carga tres lotes con polígonos y umbrales conocidos.
 insert into public.plots (id, organization_id, name, crop, geom, threshold_min, threshold_max)
 values
   (
@@ -38,6 +40,7 @@ on conflict (id) do update set
   threshold_min = excluded.threshold_min,
   threshold_max = excluded.threshold_max;
 
+-- rf-08: deja al menos una estación en cada lote.
 insert into public.stations (id, plot_id, name, lat, lng)
 values
   ('30000000-0000-4000-8000-000000000001', '20000000-0000-4000-8000-000000000001', 'Estación Costa 1', -31.391, -58.025),
@@ -45,6 +48,7 @@ values
   ('30000000-0000-4000-8000-000000000003', '20000000-0000-4000-8000-000000000003', 'Estación Monte A', -31.399, -58.020)
 on conflict (id) do update set name = excluded.name, lat = excluded.lat, lng = excluded.lng;
 
+-- rf-13: agrega una válvula cerrada por lote.
 insert into public.valves (id, plot_id, name, status)
 values
   ('40000000-0000-4000-8000-000000000001', '20000000-0000-4000-8000-000000000001', 'Válvula Norte', 'closed'),
@@ -52,6 +56,7 @@ values
   ('40000000-0000-4000-8000-000000000003', '20000000-0000-4000-8000-000000000003', 'Válvula Monte', 'closed')
 on conflict (id) do update set name = excluded.name;
 
+-- reemplaza solo las lecturas de estas estaciones para repetir la carga sin duplicarlas.
 delete from public.readings
 where station_id in (
   '30000000-0000-4000-8000-000000000001',
@@ -59,6 +64,7 @@ where station_id in (
   '30000000-0000-4000-8000-000000000003'
 );
 
+-- rf-09 y rf-10: crea una serie de seis horas; monte a inicia con dato viejo.
 insert into public.readings (station_id, measured_at, moisture_pct, temp_c, rain_mm, source)
 select
   station_id,
@@ -82,6 +88,7 @@ from (
   cross join generate_series(0, 23) as series(point)
 ) generated;
 
+-- rf-19 y rf-20: deja un ejemplo de sequía y otro de estación sin datos recientes.
 insert into public.alerts (id, plot_id, type, payload, created_at)
 values
   ('50000000-0000-4000-8000-000000000001', '20000000-0000-4000-8000-000000000002', 'dry', '{"moisture_pct":18,"threshold_min":25}', now() - interval '2 minutes'),

@@ -2,6 +2,7 @@ import { ScrollView, Pressable, StyleSheet, Text } from 'react-native';
 import { useOrganization } from '@/contexts/OrganizationContext';
 import { colors } from '@/lib/theme';
 
+// rf-03: ofrece un selector solo cuando el usuario pertenece a varios establecimientos.
 export function OrganizationSwitcher() {
   const { memberships, activeMembership, selectOrganization } = useOrganization();
   if (memberships.length <= 1) return null;

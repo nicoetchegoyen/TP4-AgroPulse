@@ -8,6 +8,7 @@ interface Props {
   onRetry?: () => void;
 }
 
+// rnf-05: reutiliza el mismo aviso para carga, falta de datos, errores y reintentos.
 export function ScreenState({ loading, title, message, onRetry }: Props) {
   return (
     <View style={styles.container} accessibilityRole="alert">

@@ -88,7 +88,7 @@ Servicios:
 - Redpanda Kafka API: `localhost:19092`
 - Redpanda Console: `http://localhost:8080`
 - Simulador: publica cada 3 a 8 segundos.
-- Worker: consume lecturas y procesa comandos cada segundo.
+- Worker: consume lecturas, procesa comandos cada medio segundo y revisa cada cinco segundos si terminó un riego temporizado. El plazo queda en Supabase y se recupera después de reiniciar el worker.
 
 Ver los logs requeridos por RF-24:
 
@@ -114,7 +114,7 @@ npm run app:android
 npm run check
 ```
 
-El comando ejecuta TypeScript strict y los tests unitarios.
+El comando ejecuta TypeScript strict y los tests unitarios de la app y del cierre temporizado del worker.
 
 ## Datos de demostración
 

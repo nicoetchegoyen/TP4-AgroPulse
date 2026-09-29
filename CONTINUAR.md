@@ -15,15 +15,16 @@ El proyecto implementa el camino obligatorio del PRD:
 - Alertas, historial y pantalla de diagnóstico.
 - Seed, informe, checklist y guion de defensa.
 
-Validaciones realizadas al 22 de septiembre de 2026:
+Validaciones realizadas al 29 de septiembre de 2026:
 
 - `npm run check`: correcto.
-- 7 pruebas unitarias aprobadas.
+- 10 pruebas unitarias aprobadas.
 - `npx expo install --check`: dependencias compatibles.
 - Bundle Android/Hermes: generado correctamente.
 - Docker Compose: configuración válida.
-- Las imágenes Docker no se construyeron en la computadora original porque Docker Desktop no estaba iniciado.
-- La integración real con Supabase queda pendiente hasta cargar credenciales propias.
+- Docker Compose construyó e inició los cuatro servicios correctamente.
+- La integración con Supabase se probó con lecturas nuevas y un comando de riego temporizado que abrió y cerró una válvula.
+- Falta verificar visualmente en el teléfono la persistencia de sesión y tomar capturas reales para la entrega.
 
 ## Clonar en la notebook
 
@@ -91,8 +92,8 @@ La contraseña es el valor local de `DEMO_PASSWORD`.
 
 Prioridad recomendada:
 
-1. Conectar un proyecto real de Supabase y validar H1 de punta a punta.
-2. Tomar una captura propia del flujo H1 y agregarla al informe.
+1. Crear los usuarios operador y asesor con `npm run seed:users` si todavía faltan.
+2. Verificar el flujo H1 y la persistencia de sesión en el teléfono; tomar capturas propias y agregarlas al informe.
 3. Probar RLS con productor, operador y asesor.
 4. Implementar lectura manual offline con `client_request_id`.
 5. Implementar cancelación de comandos pending.

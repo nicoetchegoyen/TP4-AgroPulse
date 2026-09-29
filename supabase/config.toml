@@ -1,5 +1,7 @@
+# rnf-06: identifica la configuración local de supabase para este proyecto.
 project_id = "agropulse"
 
+# expone la api de las tablas públicas cuando se usa supabase local.
 [api]
 enabled = true
 port = 54321
@@ -7,22 +9,27 @@ schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
+# define los puertos y la versión de postgres para desarrollo local.
 [db]
 port = 54322
 shadow_port = 54320
 major_version = 17
 
+# rnf-06: al reiniciar la base local, carga los datos de seed.sql.
 [db.seed]
 enabled = true
 sql_paths = ["./seed.sql"]
 
+# rnf-04: habilita la entrega de cambios en tiempo real.
 [realtime]
 enabled = true
 
+# abre la interfaz local para inspeccionar tablas y usuarios.
 [studio]
 enabled = true
 port = 54323
 
+# rf-01: configura la autenticación y el regreso a la app móvil.
 [auth]
 enabled = true
 site_url = "http://localhost:8081"
@@ -30,6 +37,7 @@ additional_redirect_urls = ["agropulse://**"]
 jwt_expiry = 3600
 enable_signup = true
 
+# rf-01: permite ingresar con correo en las cuentas de ejemplo.
 [auth.email]
 enable_signup = true
 double_confirm_changes = true

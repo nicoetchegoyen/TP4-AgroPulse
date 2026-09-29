@@ -11,10 +11,12 @@ interface AuthValue {
 
 const AuthContext = createContext<AuthValue | null>(null);
 
+// rf-01: comparte la sesión y las acciones de ingreso y salida con todas las pantallas.
 export function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
   const [initializing, setInitializing] = useState(true);
 
+  // rf-01: recupera una sesión guardada y escucha los cambios de autenticación.
   useEffect(() => {
     if (!isSupabaseConfigured) {
       setInitializing(false);
@@ -36,11 +38,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
     () => ({
       session,
       initializing,
+      // rf-01: supabase valida el correo y la contraseña; aquí solo se muestra el error.
       signIn: async (email, password) => {
         if (!isSupabaseConfigured) return 'Falta configurar Supabase en apps/agropulse/.env.';
         const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         return error?.message ?? null;
       },
+      // rf-01: cerrar sesión también limpia el acceso a datos protegidos.
       signOut: async () => {
         await supabase.auth.signOut();
       },
@@ -51,6 +55,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// este acceso evita pasar la sesión manualmente por cada componente.
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used inside AuthProvider');
