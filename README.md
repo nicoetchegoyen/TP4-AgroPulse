@@ -130,8 +130,6 @@ El móvil no consume Kafka. Usa Supabase Auth/Data API/Realtime. Redpanda perman
 
 ## Documentación de entrega
 
-- `CONTINUAR.md`: memoria de continuidad y pasos para otra computadora.
-- `AGENTS.md`: contexto técnico para continuar con Codex u otro agente.
 - `docs/informe.md`: informe de arquitectura.
 - `docs/checklist.md`: cumplimiento requisito por requisito.
 - `docs/demo-script.md`: guion de defensa H1, H2, RF-16 y sensor stale.
